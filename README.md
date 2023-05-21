@@ -6,6 +6,15 @@ String manipulation Utilities.
 
 * Get [Pester](https://pester.dev/docs/quick-start) for Testing.
 * Get [PowerShell-Beautifier](https://github.com/DTW-DanWard/PowerShell-Beautifier) too.
+* Get [PSScriptAnalyzer](https://www.powershellgallery.com/packages/PSScriptAnalyzer/1.21.0)
+
+Run pre-commit install
+
+Additional Quality Gate:
+
+```ps1
+pwsh -Command "& Invoke-ScriptAnalyzer -Recurse ./scripts/"
+```
 
 ### On Windows
 

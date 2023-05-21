@@ -27,10 +27,13 @@ function Get-TitleCase {
     [string]
     $String = ""
   )
-  [cultureinfo]::GetCultureInfo("en-US").TextInfo.ToTitleCase($String)
 
+  process {
+    [cultureinfo]::GetCultureInfo("en-US").TextInfo.ToTitleCase($String)
+  }
 }
-function Remove-UnsafeCharacters {
+function Remove-UnsafeCharacter {
+  [CmdletBinding(SupportsShouldProcess = $true)]
   param(
     [Parameter(ValueFromPipeline = $true)]
     [string]
@@ -40,11 +43,19 @@ function Remove-UnsafeCharacters {
     [hashtable]
     $UnsafeCharacters = $DefaultUnsafeCharacters['Umlauts'] + $DefaultUnsafeCharacters['Ligatures']
   )
-  foreach ($char in $UnsafeCharacters.keys) {
-    $String = $String -replace $char,$UnsafeCharacters[$char]
-  }
 
-  $String
+
+  process {
+    if ($PSCmdlet.ShouldProcess($String,("Altering String '{0}'" -f $String))) {
+    }
+    else {}
+
+    foreach ($char in $UnsafeCharacters.keys) {
+      $String = $String -replace $char,$UnsafeCharacters[$char]
+    }
+
+    $String
+  }
 }
 
 function Reduce ($initial,$sb) {
@@ -79,7 +90,7 @@ filter Acronymize {
 
   if ($String.Length -eq 1) {
     return $String | `
-       Remove-UnsafeCharacters -UnsafeCharacters $UnsafeCharacters | `
+       Remove-UnsafeCharacter -UnsafeCharacters $UnsafeCharacters | `
        Get-TitleCase
   }
   $Vovels = $VovelLikeCharacters -join ""
@@ -132,7 +143,7 @@ filter Acronymize {
 
     $remainder = $([regex]::Replace($y,$regex,'${remainder}'))
     $token = $([regex]::Replace($y,$regex,'${token}') | `
-         Remove-UnsafeCharacters -UnsafeCharacters $UnsafeCharacters | `
+         Remove-UnsafeCharacter -UnsafeCharacters $UnsafeCharacters | `
          Get-TitleCase
     )
 

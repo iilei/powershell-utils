@@ -1,0 +1,43 @@
+---
+repos:
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 8d1b9cadaf854cb25bb0b0f5870e1cc66a083d6b  # frozen: 0.2.3
+      hooks:
+          - id: yamlfmt
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: f71fa2c1f9cf5cb705f73dffe4b21f7c61470ba9  # frozen: v4.4.0
+      hooks:
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+    - repo: local
+      hooks:
+          - id: fmt-pwsh
+            name: Beautify Powershell
+            language: system
+            entry: |-
+                bash -c '
+                  if [ "$(uname)" = "WindowsNT" ]; then
+                      powershell -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF"
+                  else
+                      pwsh -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF"
+                  fi
+                ' --
+            types:
+                - powershell
+    - repo: local
+      hooks:
+          - id: run-pester
+            alias: invoke-pester
+            name: Invoke Pester
+            language: system
+            pass_filenames: false
+            entry: |-
+                bash -c '
+                  if [ "$(uname)" = "WindowsNT" ]; then
+                      powershell -Command "& Invoke-Pester"
+                  else
+                      pwsh -Command "& Invoke-Pester"
+                  fi
+                '
+            types:
+                - powershell

@@ -17,16 +17,18 @@ repos:
             entry: |-
                 bash -c '
                   if [ "$(uname)" = "WindowsNT" ]; then
-                      powershell -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF"
+                      powershell -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF ; Exit $LastExitCode"
                   else
-                      pwsh -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF"
+                      pwsh -Command "& echo $@ | Edit-DTWBeautifyScript -NewLine LF ; Exit $LastExitCode"
                   fi
+                  exit $?
                 ' --
             types:
                 - powershell
     - repo: local
       hooks:
-          - id: run-pester
+          - id: pester
+            verbose: true
             alias: invoke-pester
             name: Invoke Pester
             language: system
@@ -34,10 +36,11 @@ repos:
             entry: |-
                 bash -c '
                   if [ "$(uname)" = "WindowsNT" ]; then
-                      powershell -Command "& Invoke-Pester"
+                      powershell -Command "& Invoke-Pester ; Exit $LastExitCode"
                   else
-                      pwsh -Command "& Invoke-Pester"
+                      pwsh -Command "& Invoke-Pester ; Exit $LastExitCode"
                   fi
-                '
+                  exit $?
+                ' --
             types:
                 - powershell
